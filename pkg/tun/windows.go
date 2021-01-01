@@ -4,12 +4,13 @@ package tun
 
 import (
 	"errors"
-	"fmt"
+	"net"
+
 	"github.com/jiuzhou-zhao/tunap/pkg/hutils"
+	"github.com/jiuzhou-zhao/udp-channel/pkg"
 	"github.com/mdlayher/arp"
 	"github.com/mdlayher/ethernet"
 	"github.com/songgao/water"
-	"net"
 )
 
 type WinTunDevice struct {
@@ -32,7 +33,8 @@ func (dev *WinTunDevice) getHardwareAddr(ip net.IP) (net.HardwareAddr, error) {
 	if addr, ok := dev.realMacMap[ip.String()]; ok {
 		return addr, nil
 	}
-	return nil, fmt.Errorf("no mac address record for %v", ip.String())
+	return dev.fakeHardwareAddr(ip), nil
+	// return nil, fmt.Errorf("no mac address record for %v", ip.String())
 }
 
 func (dev *WinTunDevice) writeEthernetFrame(data []byte, destHardwareAddr net.HardwareAddr, srcHardwareAddr net.HardwareAddr, etherType ethernet.EtherType) error {
@@ -156,4 +158,8 @@ func TunDeviceSetup(localCIDR string) (TunDevice, error) {
 		ipNet:      lNet,
 		realMacMap: make(map[string]net.HardwareAddr),
 	}, nil
+}
+
+func TunClientExtInit(isTargetVPN bool, logger pkg.Logger) {
+	logger.Warnf("no op for: %v", isTargetVPN)
 }

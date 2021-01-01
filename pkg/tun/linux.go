@@ -6,6 +6,7 @@ import (
 	"net"
 
 	"github.com/jiuzhou-zhao/tunap/pkg/hutils"
+	"github.com/jiuzhou-zhao/udp-channel/pkg"
 	"github.com/milosgajdos/tenus"
 	"github.com/songgao/water"
 )
@@ -16,8 +17,6 @@ const (
 
 type LinuxTunDevice struct {
 	*water.Interface
-	ip    net.IP
-	ipNet *net.IPNet
 }
 
 func (dev *LinuxTunDevice) RouteAdd(cidr string) error {
@@ -66,4 +65,13 @@ func TunDeviceSetup(localCIDR string) (TunDevice, error) {
 	return &LinuxTunDevice{
 		Interface: tunDev,
 	}, nil
+}
+
+func TunClientExtInit(isTargetVPN bool, logger pkg.Logger) {
+	if isTargetVPN {
+		err := hutils.FirewallOpenMasquerade()
+		if err != nil {
+			logger.Errorf("firewall open masquerade failed: %v", err)
+		}
+	}
 }
