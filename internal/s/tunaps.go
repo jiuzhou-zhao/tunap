@@ -2,7 +2,7 @@ package s
 
 import (
 	"context"
-	logrus_logger "github.com/jiuzhou-zhao/tunap/pkg/logrus-logger"
+	"github.com/jiuzhou-zhao/tunap/pkg/logrus-logger"
 	"github.com/jiuzhou-zhao/udp-channel"
 	"github.com/jiuzhou-zhao/udp-channel/pkg"
 )

@@ -4,7 +4,7 @@ go 1.14
 
 require (
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
-	github.com/jiuzhou-zhao/udp-channel v0.0.0-20210101123340-38503c4a2f41
+	github.com/jiuzhou-zhao/udp-channel v0.0.0-20210102022351-77e15953735d
 	github.com/mdlayher/arp v0.0.0-20191213142603-f72070a231fc
 	github.com/mdlayher/ethernet v0.0.0-20190606142754-0394541c37b7
 	github.com/milosgajdos/tenus v0.0.3
