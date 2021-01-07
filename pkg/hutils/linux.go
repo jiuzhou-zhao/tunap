@@ -79,6 +79,18 @@ func NifRouteNetAdd(ipNet, ipNetmask, dev string) error {
 	})
 }
 
+func NifRouteNetDel(ipNet, ipNetmask, dev string) error {
+	return execute("route", []string{
+		"del",
+		"-net",
+		ipNet,
+		"netmask",
+		ipNetmask,
+		"dev",
+		dev,
+	})
+}
+
 func NifRouteHostAdd(host, dev string) error {
 	return execute("route", []string{
 		"add",

@@ -37,6 +37,22 @@ func NifRouteNetAdd(ipNet, ipNetmask, dev string) error {
 	})
 }
 
+func NifRouteNetDel(ipNet, ipNetmask, dev string) error {
+	//netInterface, err := net.InterfaceByName(dev)
+	//if err != nil {
+	//	return err
+	//}
+	return ElevationExecute("route", []string{
+		"delete",
+		ipNet,
+		"mask",
+		ipNetmask,
+		//"0.0.0.0",
+		//"if",
+		//strconv.Itoa(netInterface.Index),
+	})
+}
+
 func NifRouteHostAdd(host, dev string) error {
 	netInterface, err := net.InterfaceByName(dev)
 	if err != nil {
@@ -48,5 +64,19 @@ func NifRouteHostAdd(host, dev string) error {
 		"0.0.0.0",
 		"if",
 		strconv.Itoa(netInterface.Index),
+	})
+}
+
+func NifRouteHostDel(host, dev string) error {
+	// netInterface, err := net.InterfaceByName(dev)
+	// if err != nil {
+	//	return err
+	//}
+	return ElevationExecute("route", []string{
+		"delete",
+		host,
+		"0.0.0.0", /*
+			"if",
+			strconv.Itoa(netInterface.Index),*/
 	})
 }
