@@ -45,6 +45,10 @@ func (c *TunAPClient) Run() {
 		c.logger.Fatal(err)
 	}
 	c.logger.Infof("tun device is %v", tunDevice.Name())
+	netInterface, err := net.InterfaceByName(tunDevice.Name())
+	if err == nil {
+		c.logger.Infof("tun device index is %v", netInterface.Index)
+	}
 
 	cli, err := udp_channel.NewChannelClient(context.Background(), c.cfg.ServerAddress, ip.To4().String(),
 		c.logger, pkg.NewAESEnDecrypt(c.cfg.SecKey))

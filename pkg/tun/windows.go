@@ -5,6 +5,7 @@ package tun
 import (
 	"errors"
 	"net"
+	"sync"
 
 	"github.com/jiuzhou-zhao/tunap/pkg/hutils"
 	"github.com/jiuzhou-zhao/udp-channel/pkg"
@@ -14,6 +15,7 @@ import (
 )
 
 type WinTunDevice struct {
+	sync.RWMutex
 	ifc        *water.Interface
 	ip         net.IP
 	ipNet      *net.IPNet
@@ -26,10 +28,15 @@ func (dev *WinTunDevice) fakeHardwareAddr(ip net.IP) net.HardwareAddr {
 }
 
 func (dev *WinTunDevice) recordHardwareAddr(ip net.IP, addr net.HardwareAddr) {
+	dev.Lock()
+	defer dev.Unlock()
 	dev.realMacMap[ip.String()] = addr
 }
 
 func (dev *WinTunDevice) getHardwareAddr(ip net.IP) (net.HardwareAddr, error) {
+	dev.RLock()
+	defer dev.RUnlock()
+
 	if addr, ok := dev.realMacMap[ip.String()]; ok {
 		return addr, nil
 	}
