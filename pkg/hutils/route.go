@@ -18,6 +18,19 @@ func RouteAdd(nifName, cidr string) error {
 	return err
 }
 
+func RouteDel(nifName, cidr string) error {
+	ip, ipNet, err := net.ParseCIDR(cidr)
+	if err != nil {
+		return err
+	}
+	if !strings.HasSuffix(ip.String(), ".0") {
+		err = NifRouteHostDel(ip.String(), nifName)
+	} else {
+		err = NifRouteNetDel(ipNet.IP.String(), IPV4MaskToString(ipNet.Mask), nifName)
+	}
+	return err
+}
+
 func RouteAddByNetMask(nifName, lpNet, lpMask string) (err error) {
 	if !strings.HasSuffix(lpNet, ".0") {
 		err = NifRouteHostAdd(lpNet, nifName)

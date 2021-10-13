@@ -100,3 +100,13 @@ func NifRouteHostAdd(host, dev string) error {
 		dev,
 	})
 }
+
+func NifRouteHostDel(host, dev string) error {
+	return execute("route", []string{
+		"del",
+		"-host",
+		host,
+		"dev",
+		dev,
+	})
+}

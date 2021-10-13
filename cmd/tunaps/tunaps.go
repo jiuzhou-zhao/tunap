@@ -3,16 +3,23 @@ package main
 import (
 	"github.com/jiuzhou-zhao/tunap/internal/config"
 	"github.com/jiuzhou-zhao/tunap/internal/s"
-	"github.com/jiuzhou-zhao/tunap/pkg/logrus-logger"
+	"github.com/sgostarter/i/logger"
+	"strings"
 )
 
 func main() {
-	logger := logrus_logger.NewLogger(nil)
+	log := logger.NewWrapper(logger.NewCommLogger(&logger.FmtRecorder{}))
+	log.GetLogger().SetLevel(logger.LevelDebug)
 
 	var cfg s.Config
 	err := config.LoadConfig("s-config", &cfg)
 	if err != nil {
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
-	s.NewTunAPServer(&cfg, logger).Run()
+
+	if cfg.Env != "" && strings.ToUpper(cfg.Env) == "dev" {
+		log.GetLogger().SetLevel(logger.LevelDebug)
+	}
+
+	s.NewTunAPServer(&cfg, log).Run()
 }

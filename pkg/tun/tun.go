@@ -8,4 +8,5 @@ type TunDevice interface {
 	io.Closer
 	Name() string
 	RouteAdd(cidr string) error
+	RouteDel(cidr string) error
 }

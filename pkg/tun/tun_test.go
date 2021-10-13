@@ -13,7 +13,7 @@ func TestTunDeviceSetup(t *testing.T) {
 		ElevationURL: "http://127.0.0.1:1981",
 	})
 
-	tunDevice, err := TunDeviceSetup("192.168.11.2/24")
+	tunDevice, err := DeviceSetup("192.168.11.2/24")
 	assert.Nil(t, err)
 
 	err = tunDevice.RouteAdd("192.168.11.0/24")

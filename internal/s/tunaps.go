@@ -2,17 +2,17 @@ package s
 
 import (
 	"context"
-	"github.com/jiuzhou-zhao/tunap/pkg/logrus-logger"
-	"github.com/jiuzhou-zhao/udp-channel"
+	udpchannel "github.com/jiuzhou-zhao/udp-channel"
 	"github.com/jiuzhou-zhao/udp-channel/pkg"
+	"github.com/sgostarter/i/logger"
 )
 
 type TunAPServer struct {
 	cfg    *Config
-	logger *logrus_logger.Logger
+	logger logger.Wrapper
 }
 
-func NewTunAPServer(cfg *Config, logger *logrus_logger.Logger) *TunAPServer {
+func NewTunAPServer(cfg *Config, logger logger.Wrapper) *TunAPServer {
 	return &TunAPServer{
 		cfg:    cfg,
 		logger: logger,
@@ -20,7 +20,7 @@ func NewTunAPServer(cfg *Config, logger *logrus_logger.Logger) *TunAPServer {
 }
 
 func (s *TunAPServer) Run() {
-	udpServer, err := udp_channel.NewChannelServer(context.Background(), s.cfg.ListenAddress, s.logger, NewIPV4KeyParser(),
+	udpServer, err := udpchannel.NewChannelServer(context.Background(), s.cfg.ListenAddress, s.logger, NewIPV4KeyParser(),
 		pkg.NewAESEnDecrypt(s.cfg.SecKey), s.cfg.VpnVip)
 	if err != nil {
 		panic(err)

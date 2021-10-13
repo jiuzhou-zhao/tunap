@@ -3,16 +3,16 @@
 package tun
 
 import (
+	"github.com/sgostarter/i/logger"
 	"net"
 
 	"github.com/jiuzhou-zhao/tunap/pkg/hutils"
-	"github.com/jiuzhou-zhao/udp-channel/pkg"
 	"github.com/milosgajdos/tenus"
 	"github.com/songgao/water"
 )
 
 const (
-	tunDeviceInterfaceName = "tun_x_201231"
+	tunDeviceInterfaceName = "tun_x_21101"
 )
 
 type LinuxTunDevice struct {
@@ -23,7 +23,11 @@ func (dev *LinuxTunDevice) RouteAdd(cidr string) error {
 	return hutils.RouteAdd(dev.Name(), cidr)
 }
 
-func TunDeviceSetup(localCIDR string) (TunDevice, error) {
+func (dev *LinuxTunDevice) RouteDel(cidr string) error {
+	return hutils.NifRouteHostDel(dev.Name(), cidr)
+}
+
+func DeviceSetup(localCIDR string) (TunDevice, error) {
 	lIP, lNet, err := net.ParseCIDR(localCIDR)
 	if err != nil {
 		return nil, err
@@ -67,7 +71,7 @@ func TunDeviceSetup(localCIDR string) (TunDevice, error) {
 	}, nil
 }
 
-func TunClientExtInit(isTargetVPN bool, logger pkg.Logger) {
+func ClientExtInit(isTargetVPN bool, logger logger.Wrapper) {
 	if isTargetVPN {
 		err := hutils.FirewallOpenMasquerade()
 		if err != nil {
