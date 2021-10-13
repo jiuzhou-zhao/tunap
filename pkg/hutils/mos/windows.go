@@ -1,14 +1,15 @@
 // +build windows
 
-package hutils
+package mos
 
 import (
+	"github.com/jiuzhou-zhao/tunap/pkg/hutils"
 	"net"
 	"strconv"
 )
 
 func NifSetIPAddress(ifName, ip, mask string) error {
-	return ElevationExecute("netsh", []string{
+	return hutils.ElevationExecute("netsh", []string{
 		"interface",
 		"ip",
 		"set",
@@ -26,7 +27,7 @@ func NifRouteNetAdd(ipNet, ipNetmask, dev string) error {
 	if err != nil {
 		return err
 	}
-	return ElevationExecute("route", []string{
+	return hutils.ElevationExecute("route", []string{
 		"add",
 		ipNet,
 		"mask",
@@ -42,7 +43,7 @@ func NifRouteNetDel(ipNet, ipNetmask, dev string) error {
 	//if err != nil {
 	//	return err
 	//}
-	return ElevationExecute("route", []string{
+	return hutils.ElevationExecute("route", []string{
 		"delete",
 		ipNet,
 		"mask",
@@ -58,7 +59,7 @@ func NifRouteHostAdd(host, dev string) error {
 	if err != nil {
 		return err
 	}
-	return ElevationExecute("route", []string{
+	return hutils.ElevationExecute("route", []string{
 		"add",
 		host,
 		"0.0.0.0",
@@ -72,7 +73,7 @@ func NifRouteHostDel(host, dev string) error {
 	// if err != nil {
 	//	return err
 	//}
-	return ElevationExecute("route", []string{
+	return hutils.ElevationExecute("route", []string{
 		"delete",
 		host,
 		"0.0.0.0", /*

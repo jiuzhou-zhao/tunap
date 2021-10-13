@@ -1,10 +1,11 @@
 package main
 
 import (
+	"strings"
+
 	"github.com/jiuzhou-zhao/tunap/internal/config"
 	"github.com/jiuzhou-zhao/tunap/internal/s"
 	"github.com/sgostarter/i/logger"
-	"strings"
 )
 
 func main() {
@@ -21,5 +22,12 @@ func main() {
 		log.GetLogger().SetLevel(logger.LevelDebug)
 	}
 
-	s.NewTunAPServer(&cfg, log).Run()
+	tunS := s.NewTunAPServer(&cfg, log)
+	if cfg.WebListenAddress != "" {
+		go func() {
+			s.RunWeb(cfg.WebListenAddress, tunS)
+		}()
+	}
+
+	tunS.Run()
 }

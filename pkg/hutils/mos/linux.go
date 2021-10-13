@@ -1,6 +1,6 @@
 // +build linux
 
-package hutils
+package mos
 
 import (
 	"github.com/golang/glog"

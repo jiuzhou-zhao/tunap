@@ -3,10 +3,10 @@
 package tun
 
 import (
+	"github.com/jiuzhou-zhao/tunap/pkg/hutils/mos"
 	"github.com/sgostarter/i/logger"
 	"net"
 
-	"github.com/jiuzhou-zhao/tunap/pkg/hutils"
 	"github.com/milosgajdos/tenus"
 	"github.com/songgao/water"
 )
@@ -20,11 +20,11 @@ type LinuxTunDevice struct {
 }
 
 func (dev *LinuxTunDevice) RouteAdd(cidr string) error {
-	return hutils.RouteAdd(dev.Name(), cidr)
+	return mos.RouteAdd(dev.Name(), cidr)
 }
 
 func (dev *LinuxTunDevice) RouteDel(cidr string) error {
-	return hutils.NifRouteHostDel(dev.Name(), cidr)
+	return mos.NifRouteHostDel(dev.Name(), cidr)
 }
 
 func DeviceSetup(localCIDR string) (TunDevice, error) {
@@ -61,7 +61,7 @@ func DeviceSetup(localCIDR string) (TunDevice, error) {
 		return nil, err
 	}
 
-	err = hutils.FirewallTrustNif(tunDev.Name())
+	err = mos.FirewallTrustNif(tunDev.Name())
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +73,7 @@ func DeviceSetup(localCIDR string) (TunDevice, error) {
 
 func ClientExtInit(isTargetVPN bool, logger logger.Wrapper) {
 	if isTargetVPN {
-		err := hutils.FirewallOpenMasquerade()
+		err := mos.FirewallOpenMasquerade()
 		if err != nil {
 			logger.Errorf("firewall open masquerade failed: %v", err)
 		}

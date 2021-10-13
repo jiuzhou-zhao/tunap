@@ -4,6 +4,7 @@ package tun
 
 import (
 	"errors"
+	"github.com/jiuzhou-zhao/tunap/pkg/hutils/mos"
 	"net"
 	"sync"
 
@@ -136,7 +137,7 @@ func (dev *WinTunDevice) Name() string {
 }
 
 func (dev *WinTunDevice) RouteAdd(cidr string) error {
-	return hutils.RouteAdd(dev.Name(), cidr)
+	return mos.RouteAdd(dev.Name(), cidr)
 }
 
 func TunDeviceSetup(localCIDR string) (TunDevice, error) {

@@ -1,10 +1,11 @@
 module github.com/jiuzhou-zhao/tunap
 
-go 1.14
+go 1.16
 
 require (
+	github.com/gin-gonic/gin v1.7.4
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
-	github.com/jiuzhou-zhao/udp-channel v1.0.2-0.20211013054901-9e47e8bd5953
+	github.com/jiuzhou-zhao/udp-channel v1.0.2-0.20211013092943-8c4c657e963a
 	github.com/mdlayher/arp v0.0.0-20191213142603-f72070a231fc
 	github.com/mdlayher/ethernet v0.0.0-20190606142754-0394541c37b7
 	github.com/milosgajdos/tenus v0.0.3

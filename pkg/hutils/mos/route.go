@@ -1,6 +1,7 @@
-package hutils
+package mos
 
 import (
+	"github.com/jiuzhou-zhao/tunap/pkg/hutils"
 	"net"
 	"strings"
 )
@@ -13,7 +14,7 @@ func RouteAdd(nifName, cidr string) error {
 	if !strings.HasSuffix(ip.String(), ".0") {
 		err = NifRouteHostAdd(ip.String(), nifName)
 	} else {
-		err = NifRouteNetAdd(ipNet.IP.String(), IPV4MaskToString(ipNet.Mask), nifName)
+		err = NifRouteNetAdd(ipNet.IP.String(), hutils.IPV4MaskToString(ipNet.Mask), nifName)
 	}
 	return err
 }
@@ -26,7 +27,7 @@ func RouteDel(nifName, cidr string) error {
 	if !strings.HasSuffix(ip.String(), ".0") {
 		err = NifRouteHostDel(ip.String(), nifName)
 	} else {
-		err = NifRouteNetDel(ipNet.IP.String(), IPV4MaskToString(ipNet.Mask), nifName)
+		err = NifRouteNetDel(ipNet.IP.String(), hutils.IPV4MaskToString(ipNet.Mask), nifName)
 	}
 	return err
 }

@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"bufio"
-	"github.com/jiuzhou-zhao/tunap/pkg/hutils"
+	"github.com/jiuzhou-zhao/tunap/pkg/hutils/mos"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"io"
@@ -71,9 +71,9 @@ var routeCmd = &cobra.Command{
 			return
 		}
 		if setup {
-			hutils.SetRoutes(routes, dev)
+			mos.SetRoutes(routes, dev)
 		} else {
-			hutils.UnsetRoutes(routes, dev)
+			mos.UnsetRoutes(routes, dev)
 		}
 	},
 }
