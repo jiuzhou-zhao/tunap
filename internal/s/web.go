@@ -2,11 +2,10 @@ package s
 
 import (
 	"embed"
+	"github.com/gin-gonic/gin"
 	"html/template"
 	"log"
 	"net/http"
-
-	"github.com/gin-gonic/gin"
 )
 
 //go:embed templates
@@ -17,6 +16,10 @@ type CliInfo struct {
 	Ip     string
 	VpnIPs template.HTML
 	LanIPs template.HTML
+
+	CreateTime     string
+	LastAccessTime string
+	TransBytes     string
 }
 
 type ClientView interface {
