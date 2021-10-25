@@ -49,7 +49,7 @@ func (c *TunAPClient) Run() {
 		c.logger.Fatal(err)
 	}
 
-	tunDevice, err := tun.DeviceSetup(vipCidr)
+	tunDevice, err := tun.DeviceSetup(vipCidr, c.cfg.NifName)
 	if err != nil {
 		c.logger.Fatal(err)
 	}

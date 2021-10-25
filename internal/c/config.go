@@ -11,4 +11,5 @@ type Config struct {
 	IsVPNTarget           bool     `yaml:"IsVPNTarget"`   // 是否为 VPN Target
 	VpnIPs                []string `yaml:"VpnIPs"`        // VPN IP 列表
 	LanIPs                []string `yaml:"LanIPs"`        // 局域网 IP 列表
+	NifName               string   `yaml:"NifName"`       // 网卡名字
 }

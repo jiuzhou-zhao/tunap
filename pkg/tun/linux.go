@@ -27,14 +27,18 @@ func (dev *LinuxTunDevice) RouteDel(cidr string) error {
 	return mos.NifRouteHostDel(dev.Name(), cidr)
 }
 
-func DeviceSetup(localCIDR string) (TunDevice, error) {
+func DeviceSetup(localCIDR, deviceName string) (TunDevice, error) {
 	lIP, lNet, err := net.ParseCIDR(localCIDR)
 	if err != nil {
 		return nil, err
 	}
 
+	if deviceName == "" {
+		deviceName = tunDeviceInterfaceName
+	}
+
 	tunDev, err := water.New(water.Config{DeviceType: water.TUN, PlatformSpecificParams: water.PlatformSpecificParams{
-		Name: tunDeviceInterfaceName,
+		Name: deviceName,
 	}})
 
 	if err != nil {

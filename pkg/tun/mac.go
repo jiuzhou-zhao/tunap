@@ -4,7 +4,7 @@ package tun
 
 import "github.com/sgostarter/i/logger"
 
-func DeviceSetup(localCIDR string) (TunDevice, error) {
+func DeviceSetup(localCIDR, deviceName string) (TunDevice, error) {
 	return nil, nil
 }
 
