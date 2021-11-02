@@ -2,13 +2,18 @@ package s
 
 import (
 	"context"
-	udpchannel "github.com/jiuzhou-zhao/udp-channel"
-	"github.com/jiuzhou-zhao/udp-channel/pkg"
-	"github.com/sgostarter/i/logger"
 	"html/template"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/jiuzhou-zhao/data-channel/dataprocessor"
+	"github.com/jiuzhou-zhao/data-channel/inter"
+	"github.com/jiuzhou-zhao/data-channel/tcp"
+	"github.com/jiuzhou-zhao/data-channel/udp"
+	"github.com/jiuzhou-zhao/data-channel/wrapper"
+	udpchannel "github.com/jiuzhou-zhao/udp-channel"
+	"github.com/sgostarter/i/logger"
 )
 
 type TunAPServer struct {
@@ -26,8 +31,26 @@ func NewTunAPServer(cfg *Config, logger logger.Wrapper) *TunAPServer {
 
 func (s *TunAPServer) Run() {
 	var err error
-	s.udpServer, err = udpchannel.NewChannelServer(context.Background(), s.cfg.ListenAddress, s.logger, NewIPV4KeyParser(),
-		pkg.NewAESEnDecrypt(s.cfg.SecKey), s.cfg.VpnVip)
+
+	var serverChannel inter.Server
+	dps := make([]inter.ServerDataProcessor, 0)
+	switch strings.ToLower(s.cfg.DataChannelType) {
+	case "udp", "":
+		serverChannel, err = udp.NewServer(context.Background(), s.cfg.ListenAddress, nil, s.logger)
+	case "tcp":
+		serverChannel, err = tcp.NewServer(context.Background(), s.cfg.ListenAddress, nil, s.logger)
+		dps = append(dps, dataprocessor.NewServerTCPBag())
+	}
+
+	if err != nil {
+		s.logger.Fatal(err)
+	}
+
+	dps = append(dps, dataprocessor.NewServerEncryptDataProcess([]byte(s.cfg.SecKey)))
+
+	s.udpServer, err = udpchannel.NewChannelServer(context.Background(), s.logger, NewIPV4KeyParser(),
+		wrapper.NewServer(serverChannel, dps...), s.cfg.VpnVip)
+
 	if err != nil {
 		panic(err)
 	}

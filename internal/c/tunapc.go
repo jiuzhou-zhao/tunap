@@ -3,12 +3,17 @@ package c
 import (
 	"context"
 	"net"
+	"strings"
 
+	"github.com/jiuzhou-zhao/data-channel/dataprocessor"
+	"github.com/jiuzhou-zhao/data-channel/inter"
+	"github.com/jiuzhou-zhao/data-channel/tcp"
+	"github.com/jiuzhou-zhao/data-channel/udp"
+	"github.com/jiuzhou-zhao/data-channel/wrapper"
 	"github.com/jiuzhou-zhao/tunap/pkg/hutils"
 	"github.com/jiuzhou-zhao/tunap/pkg/minit"
 	"github.com/jiuzhou-zhao/tunap/pkg/tun"
 	udpchannel "github.com/jiuzhou-zhao/udp-channel"
-	"github.com/jiuzhou-zhao/udp-channel/pkg"
 	"github.com/sgostarter/i/logger"
 )
 
@@ -79,13 +84,28 @@ func (c *TunAPClient) Run() {
 		lanIPs = append(lanIPs, cidr)
 	}
 
+	var cliChannel inter.Client
+	dps := make([]inter.ClientDataProcessor, 0)
+	switch strings.ToLower(c.cfg.DataChannelType) {
+	case "udp", "":
+		cliChannel, err = udp.NewClient(context.Background(), c.cfg.ServerAddress, nil, c.logger)
+	case "tcp":
+		cliChannel, err = tcp.NewClient(context.Background(), c.cfg.ServerAddress, nil, c.logger)
+		dps = append(dps, dataprocessor.NewClientTCPBag())
+	}
+
+	if err != nil {
+		c.logger.Fatal(err)
+	}
+
+	dps = append(dps, dataprocessor.NewClientEncryptDataProcess([]byte(c.cfg.SecKey)))
+
 	d := &udpchannel.ChannelClientData{
-		ServerAddr: c.cfg.ServerAddress,
-		Key:        vip,
-		VpnIPs:     vpnIPs,
-		LanIPs:     lanIPs,
-		Log:        c.logger,
-		Crypt:      pkg.NewAESEnDecrypt(c.cfg.SecKey),
+		Key:               vip,
+		VpnIPs:            vpnIPs,
+		LanIPs:            lanIPs,
+		Log:               c.logger,
+		ClientDataChannel: wrapper.NewClient(cliChannel, dps...),
 	}
 
 	cli, err := udpchannel.NewChannelClient(context.Background(), d)
