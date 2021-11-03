@@ -17,11 +17,12 @@ func (p *IPPacket) IPver() int {
 	if 4 == ((*p)[0] >> 4) {
 		return 4
 	}
+
 	if 6 == ((*p)[0] >> 4) {
 		return 6
 	}
-	return 0
 
+	return 0
 }
 
 // Dst returns [4]byte for destination of package

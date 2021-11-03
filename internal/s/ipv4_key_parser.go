@@ -2,9 +2,10 @@ package s
 
 import (
 	"errors"
+	"strings"
+
 	"github.com/jiuzhou-zhao/tunap/pkg/hutils"
 	udpchannel "github.com/jiuzhou-zhao/udp-channel"
-	"strings"
 )
 
 type IPV4KeyParser struct{}
@@ -16,11 +17,15 @@ func NewIPV4KeyParser() *IPV4KeyParser {
 func (parser *IPV4KeyParser) ParseData(d []byte) (key string, dd []byte, err error) {
 	ipPackage := hutils.IPPacket(d)
 	if ipPackage.IPver() != 4 {
+		// nolint: goerr113
 		err = errors.New("not ip v4")
+
 		return
 	}
+
 	key = ipPackage.DstV4().String()
 	dd = d
+
 	return
 }
 
@@ -39,6 +44,7 @@ func (parser *IPV4KeyParser) CompareKeyWithCIDR(key string, cidr string) bool {
 	if cidr == "" {
 		return false
 	}
+
 	cidrKey, _ := parser.ParseKeyFromIPOrCIDR(cidr)
 
 	return key == cidrKey

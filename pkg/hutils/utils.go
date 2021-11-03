@@ -11,5 +11,6 @@ func IPV4MaskToString(ipMask net.IPMask) string {
 	for _, i := range ipMask[:] {
 		s = append(s, strconv.Itoa(int(i)))
 	}
+
 	return strings.Join(s, ".")
 }

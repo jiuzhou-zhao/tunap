@@ -5,8 +5,8 @@ go 1.16
 require (
 	github.com/gin-gonic/gin v1.7.4
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
-	github.com/jiuzhou-zhao/data-channel v0.0.0-20211102020621-f3ec5e64837c
-	github.com/jiuzhou-zhao/udp-channel v0.0.0-20211102021335-b5ed9e915122
+	github.com/jiuzhou-zhao/data-channel v0.0.0-20211103014013-194b4741b6df
+	github.com/jiuzhou-zhao/udp-channel v0.0.0-20211103014253-8e1f0b1d37c9
 	github.com/mdlayher/arp v0.0.0-20191213142603-f72070a231fc
 	github.com/mdlayher/ethernet v0.0.0-20190606142754-0394541c37b7
 	github.com/milosgajdos/tenus v0.0.3

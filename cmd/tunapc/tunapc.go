@@ -1,17 +1,21 @@
 package main
 
 import (
+	"strings"
+
 	"github.com/jiuzhou-zhao/tunap/internal/c"
 	"github.com/jiuzhou-zhao/tunap/internal/config"
 	"github.com/sgostarter/i/logger"
-	"strings"
 )
 
 func main() {
-	log := logger.NewWrapper(logger.NewCommLogger(&logger.FmtRecorder{}))
+	rLog := logger.NewCommLogger(&logger.FmtRecorder{})
+	rLog.SetLevel(logger.LevelDebug)
+	log := logger.NewWrapper(rLog)
 
 	var cfg c.Config
 	err := config.LoadConfig("c-config", &cfg)
+
 	if err != nil {
 		log.Fatal(err)
 	}

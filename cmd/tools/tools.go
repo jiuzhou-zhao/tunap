@@ -19,8 +19,8 @@ route add 0.0.0.0 MASK 0.0.0.0 0.0.0.0 metric 100 if 7
 */
 func main() {
 	minit.Init(&minit.TunAPInitConfig{ElevationURL: "http://127.0.0.1:1981"})
-	err := cmd.Execute()
-	if err != nil {
+
+	if err := cmd.Execute(); err != nil {
 		panic(err)
 	}
 }

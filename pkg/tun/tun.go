@@ -2,7 +2,7 @@ package tun
 
 import "io"
 
-type TunDevice interface {
+type Device interface {
 	io.Reader
 	io.Writer
 	io.Closer

@@ -2,12 +2,14 @@ package cmd
 
 import (
 	"bufio"
-	"github.com/jiuzhou-zhao/tunap/pkg/hutils/mos"
-	"github.com/sirupsen/logrus"
-	"github.com/spf13/cobra"
+	"errors"
 	"io"
 	"os"
 	"strings"
+
+	"github.com/jiuzhou-zhao/tunap/pkg/hutils/mos"
+	"github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
 )
 
 var dev string
@@ -24,6 +26,7 @@ func routesFromFile(file string) (routes []string, err error) {
 	if err != nil {
 		return
 	}
+
 	defer func() {
 		_ = f.Close()
 	}()
@@ -32,28 +35,38 @@ func routesFromFile(file string) (routes []string, err error) {
 	r := bufio.NewReader(f)
 
 	var line []byte
+
 	for {
 		line, _, err = r.ReadLine()
-		if err == io.EOF {
+		if errors.Is(err, io.EOF) {
 			err = nil
+
 			break
 		}
+
 		lineS := string(line)
 		lineS = strings.Trim(lineS, "\r\n \t")
+
 		if lineS == "" || lineS[0] == '#' {
 			continue
 		}
+
 		ls := strings.Split(lineS, "=")
+
 		if len(ls) != 2 {
 			continue
 		}
+
 		ls[0] = strings.Trim(ls[0], "\r\n \t")
 		ls[1] = strings.Trim(ls[1], "\r\n \t")
+
 		if ls[0] != "route" {
 			continue
 		}
+
 		routes = append(routes, ls[1])
 	}
+
 	return
 }
 
@@ -68,6 +81,7 @@ var routeCmd = &cobra.Command{
 		routes, err := routesFromFile(args[0])
 		if err != nil {
 			logrus.Errorf("read routes from file [%v] failed: %v", args[0], err)
+
 			return
 		}
 		if setup {
@@ -78,6 +92,7 @@ var routeCmd = &cobra.Command{
 	},
 }
 
+// nolint: gochecknoinits
 func init() {
 	rootCmd.AddCommand(vpnCmd)
 	vpnCmd.AddCommand(routeCmd)

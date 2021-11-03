@@ -33,12 +33,15 @@ func (s *TunAPServer) Run() {
 	var err error
 
 	var serverChannel inter.Server
-	dps := make([]inter.ServerDataProcessor, 0)
+
+	dps := []inter.ServerDataProcessor{dataprocessor.NewServerEncryptDataProcess([]byte(s.cfg.SecKey))}
+
 	switch strings.ToLower(s.cfg.DataChannelType) {
 	case "udp", "":
 		serverChannel, err = udp.NewServer(context.Background(), s.cfg.ListenAddress, nil, s.logger)
 	case "tcp":
 		serverChannel, err = tcp.NewServer(context.Background(), s.cfg.ListenAddress, nil, s.logger)
+
 		dps = append(dps, dataprocessor.NewServerTCPBag())
 	}
 
@@ -46,14 +49,13 @@ func (s *TunAPServer) Run() {
 		s.logger.Fatal(err)
 	}
 
-	dps = append(dps, dataprocessor.NewServerEncryptDataProcess([]byte(s.cfg.SecKey)))
-
 	s.udpServer, err = udpchannel.NewChannelServer(context.Background(), s.logger, NewIPV4KeyParser(),
-		wrapper.NewServer(serverChannel, dps...), s.cfg.VpnVip)
+		wrapper.NewServer(serverChannel, s.logger, dps...), s.cfg.VpnVip)
 
 	if err != nil {
 		panic(err)
 	}
+
 	s.udpServer.Wait()
 }
 
@@ -71,12 +73,15 @@ func (s *TunAPServer) GetCliInfos() (is []*CliInfo) {
 		k := uint64(1024)
 		m := 1024 * k
 		g := 1024 * m
+
 		if v >= g {
 			return strconv.FormatFloat(float64(v)/float64(g), 'f', 2, 64) + "GB"
 		}
+
 		if v >= m {
 			return strconv.FormatFloat(float64(v)/float64(m), 'f', 2, 64) + "MB"
 		}
+
 		if v >= k {
 			return strconv.FormatFloat(float64(v)/float64(k), 'f', 2, 64) + "KB"
 		}
@@ -86,9 +91,11 @@ func (s *TunAPServer) GetCliInfos() (is []*CliInfo) {
 
 	for _, cis := range us.GetClientInfos() {
 		is = append(is, &CliInfo{
-			Vip:            cis.VIP,
-			Ip:             cis.Address,
-			VpnIPs:         template.HTML(strings.Join(cis.VpnIPs, "<br>")),
+			Vip: cis.VIP,
+			IP:  cis.Address,
+			// nolint: gosec
+			VpnIPs: template.HTML(strings.Join(cis.VpnIPs, "<br>")),
+			// nolint: gosec
 			LanIPs:         template.HTML(strings.Join(cis.LanIPs, "<br>")),
 			CreateTime:     fnFormatTime(cis.CreateTime),
 			LastAccessTime: fnFormatTime(cis.LastAccessTime),

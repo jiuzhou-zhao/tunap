@@ -25,10 +25,13 @@ type TunAPClient struct {
 func NewTunAPClient(cfg *Config, logger logger.Wrapper) *TunAPClient {
 	minit.Init(&cfg.TunAPInitConfig)
 	f := cfg.IsVPNTarget
+
 	if !f {
 		f = len(cfg.LanIPs) > 0
 	}
+
 	tun.ClientExtInit(f, logger)
+
 	return &TunAPClient{
 		cfg:    cfg,
 		logger: logger,
@@ -40,9 +43,11 @@ func (c *TunAPClient) dumpIPV4Package(preLog string, d []byte) {
 	if p.IPver() != 4 {
 		return
 	}
+
 	c.logger.Infof("%v %v -> %v", preLog, p.SrcV4().String(), p.DstV4().String())
 }
 
+// nolint: funlen,gocognit
 func (c *TunAPClient) Run() {
 	vipCidr, err := udpchannel.ToCIDR(c.cfg.Vip)
 	if err != nil {
@@ -60,37 +65,45 @@ func (c *TunAPClient) Run() {
 	}
 
 	vpnIPs := make([]string, 0, len(c.cfg.VpnIPs))
+
 	for _, ip := range c.cfg.VpnIPs {
-		cidr, err := udpchannel.ToCIDR(ip)
-		if err != nil {
-			c.logger.Fatal(err)
+		cidr, err1 := udpchannel.ToCIDR(ip)
+		if err1 != nil {
+			c.logger.Fatal(err1)
 		}
+
 		_ = tunDevice.RouteAdd(cidr)
 		vpnIPs = append(vpnIPs, cidr)
 	}
 
 	c.logger.Infof("tun device is %v", tunDevice.Name())
 	netInterface, err := net.InterfaceByName(tunDevice.Name())
+
 	if err == nil {
 		c.logger.Infof("tun device index is %v", netInterface.Index)
 	}
 
 	lanIPs := make([]string, 0, len(c.cfg.LanIPs))
+
 	for _, ip := range c.cfg.LanIPs {
-		cidr, err := udpchannel.ToCIDR(ip)
-		if err != nil {
-			c.logger.Fatal(err)
+		cidr, err1 := udpchannel.ToCIDR(ip)
+		if err1 != nil {
+			c.logger.Fatal(err1)
 		}
+
 		lanIPs = append(lanIPs, cidr)
 	}
 
 	var cliChannel inter.Client
-	dps := make([]inter.ClientDataProcessor, 0)
+
+	dps := []inter.ClientDataProcessor{dataprocessor.NewClientEncryptDataProcess([]byte(c.cfg.SecKey))}
+
 	switch strings.ToLower(c.cfg.DataChannelType) {
 	case "udp", "":
 		cliChannel, err = udp.NewClient(context.Background(), c.cfg.ServerAddress, nil, c.logger)
 	case "tcp":
 		cliChannel, err = tcp.NewClient(context.Background(), c.cfg.ServerAddress, nil, c.logger)
+
 		dps = append(dps, dataprocessor.NewClientTCPBag())
 	}
 
@@ -98,14 +111,12 @@ func (c *TunAPClient) Run() {
 		c.logger.Fatal(err)
 	}
 
-	dps = append(dps, dataprocessor.NewClientEncryptDataProcess([]byte(c.cfg.SecKey)))
-
 	d := &udpchannel.ChannelClientData{
 		Key:               vip,
 		VpnIPs:            vpnIPs,
 		LanIPs:            lanIPs,
 		Log:               c.logger,
-		ClientDataChannel: wrapper.NewClient(cliChannel, dps...),
+		ClientDataChannel: wrapper.NewClient(cliChannel, c.logger, dps...),
 	}
 
 	cli, err := udpchannel.NewChannelClient(context.Background(), d)
@@ -117,11 +128,15 @@ func (c *TunAPClient) Run() {
 		for {
 			d := make([]byte, 40960)
 			n, e := tunDevice.Read(d)
+
 			if e != nil {
 				c.logger.Errorf("tun device read failed: %v", e)
+
 				continue
 			}
+
 			c.dumpIPV4Package("READ FROM DEVICE:", d[:n])
+
 			cli.WritePackage(d[:n])
 		}
 	}()
@@ -130,12 +145,14 @@ func (c *TunAPClient) Run() {
 		for iData := range cli.ReadIncomingMsgChan() {
 			if iData.Error != nil {
 				c.logger.Errorf("tun device read incoming msg error: %v", iData.Error)
+
 				continue
 			}
 
 			if iData.Data != nil {
 				c.dumpIPV4Package("WRITE TO DEVICE:", iData.Data)
 				_, e := tunDevice.Write(iData.Data)
+
 				if e != nil {
 					c.logger.Errorf("tun device write failed: %v", e)
 				}
@@ -143,6 +160,7 @@ func (c *TunAPClient) Run() {
 
 			if len(iData.AddedForwardIPs) > 0 {
 				c.logger.Info("--- AddedForwardIPs", iData.AddedForwardIPs)
+
 				for _, cidr := range iData.AddedForwardIPs {
 					_ = tunDevice.RouteAdd(cidr)
 				}
@@ -150,12 +168,12 @@ func (c *TunAPClient) Run() {
 
 			if len(iData.RemovedForwardIPs) > 0 {
 				c.logger.Info("--- RemovedForwardIPs", iData.RemovedForwardIPs)
+
 				for _, cidr := range iData.RemovedForwardIPs {
 					_ = tunDevice.RouteDel(cidr)
 				}
 			}
 		}
-
 	}()
 
 	cli.Wait()

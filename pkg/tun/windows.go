@@ -140,7 +140,7 @@ func (dev *WinTunDevice) RouteAdd(cidr string) error {
 	return mos.RouteAdd(dev.Name(), cidr)
 }
 
-func TunDeviceSetup(localCIDR, _ string) (TunDevice, error) {
+func TunDeviceSetup(localCIDR, _ string) (Device, error) {
 	lIP, lNet, err := net.ParseCIDR(localCIDR)
 	if err != nil {
 		return nil, err

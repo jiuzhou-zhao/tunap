@@ -26,6 +26,7 @@ type execCommandResponse struct {
 func ElevationExecute(name string, args []string) error {
 	o, e := ElevationExecuteEx(name, args)
 	log.Println(o)
+
 	return e
 }
 
@@ -39,23 +40,29 @@ func ElevationExecuteEx(name string, args []string) (string, error) {
 	}
 	bd, _ := json.Marshal(req)
 
+	// nolint: noctx
 	httpResp, err := http.Post(u.String(), "application/json", bytes.NewReader(bd))
 	if err != nil {
 		return "", err
 	}
 	defer httpResp.Body.Close()
 	body, err := ioutil.ReadAll(httpResp.Body)
+
 	if err != nil {
 		return "", err
 	}
 
 	var resp execCommandResponse
 	err = json.Unmarshal(body, &resp)
+
 	if err != nil {
 		return "", err
 	}
+
 	if resp.Error != "" {
+		// nolint: goerr113
 		return resp.CombinedOutput, errors.New(resp.Error)
 	}
+
 	return resp.CombinedOutput, nil
 }
