@@ -1,13 +1,14 @@
+//go:build linux
 // +build linux
 
 package tun
 
 import (
-	"github.com/jiuzhou-zhao/tunap/pkg/hutils/mos"
-	"github.com/sgostarter/i/logger"
 	"net"
 
+	"github.com/jiuzhou-zhao/tunap/pkg/hutils/mos"
 	"github.com/milosgajdos/tenus"
+	"github.com/sgostarter/i/logger"
 	"github.com/songgao/water"
 )
 
