@@ -5,24 +5,23 @@ import (
 
 	"github.com/jiuzhou-zhao/tunap/internal/c"
 	"github.com/jiuzhou-zhao/tunap/internal/config"
-	"github.com/sgostarter/i/logger"
+	"github.com/sgostarter/i/l"
+	"github.com/sgostarter/liblogrus"
 )
 
 func main() {
-	rLog := logger.NewCommLogger(&logger.FmtRecorder{})
-	rLog.SetLevel(logger.LevelDebug)
-	log := logger.NewWrapper(rLog)
+	logger := l.NewWrapper(liblogrus.NewLogrus())
 
 	var cfg c.Config
 	err := config.LoadConfig("c-config", &cfg)
 
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal(err)
 	}
 
 	if cfg.Env != "" && strings.ToUpper(cfg.Env) == "dev" {
-		log.GetLogger().SetLevel(logger.LevelDebug)
+		logger.GetLogger().SetLevel(l.LevelDebug)
 	}
 
-	c.NewTunAPClient(&cfg, log).Run()
+	c.NewTunAPClient(&cfg, logger).Run()
 }

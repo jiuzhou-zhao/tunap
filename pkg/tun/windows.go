@@ -1,17 +1,18 @@
+//go:build windows
 // +build windows
 
 package tun
 
 import (
 	"errors"
-	"github.com/jiuzhou-zhao/tunap/pkg/hutils/mos"
 	"net"
 	"sync"
 
 	"github.com/jiuzhou-zhao/tunap/pkg/hutils"
-	"github.com/jiuzhou-zhao/udp-channel/pkg"
+	"github.com/jiuzhou-zhao/tunap/pkg/hutils/mos"
 	"github.com/mdlayher/arp"
 	"github.com/mdlayher/ethernet"
+	"github.com/sgostarter/i/l"
 	"github.com/songgao/water"
 )
 
@@ -140,7 +141,11 @@ func (dev *WinTunDevice) RouteAdd(cidr string) error {
 	return mos.RouteAdd(dev.Name(), cidr)
 }
 
-func TunDeviceSetup(localCIDR, _ string) (Device, error) {
+func (dev *WinTunDevice) RouteDel(cidr string) error {
+	return mos.NifRouteHostDel(dev.Name(), cidr)
+}
+
+func DeviceSetup(localCIDR, _ string) (Device, error) {
 	lIP, lNet, err := net.ParseCIDR(localCIDR)
 	if err != nil {
 		return nil, err
@@ -155,7 +160,7 @@ func TunDeviceSetup(localCIDR, _ string) (Device, error) {
 		return nil, err
 	}
 
-	err = hutils.NifSetIPAddress(tunDev.Name(), lIP.String(), hutils.IPV4MaskToString(lNet.Mask))
+	err = mos.NifSetIPAddress(tunDev.Name(), lIP.String(), hutils.IPV4MaskToString(lNet.Mask))
 	if err != nil {
 		return nil, err
 	}
@@ -168,6 +173,6 @@ func TunDeviceSetup(localCIDR, _ string) (Device, error) {
 	}, nil
 }
 
-func TunClientExtInit(isTargetVPN bool, logger pkg.Logger) {
-	logger.Warnf("no op for: %v", isTargetVPN)
+func ClientExtInit(isTargetVPN bool, logger l.Wrapper) {
+
 }

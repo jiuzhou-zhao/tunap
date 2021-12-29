@@ -4,8 +4,8 @@ import (
 	"errors"
 	"strings"
 
+	udpchannel "github.com/jiuzhou-zhao/tun-channel"
 	"github.com/jiuzhou-zhao/tunap/pkg/hutils"
-	udpchannel "github.com/jiuzhou-zhao/udp-channel"
 )
 
 type IPV4KeyParser struct{}

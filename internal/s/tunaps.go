@@ -12,20 +12,20 @@ import (
 	"github.com/jiuzhou-zhao/data-channel/tcp"
 	"github.com/jiuzhou-zhao/data-channel/udp"
 	"github.com/jiuzhou-zhao/data-channel/wrapper"
-	udpchannel "github.com/jiuzhou-zhao/udp-channel"
-	"github.com/sgostarter/i/logger"
+	udpchannel "github.com/jiuzhou-zhao/tun-channel"
+	"github.com/sgostarter/i/l"
 )
 
 type TunAPServer struct {
 	cfg       *Config
-	logger    logger.Wrapper
+	logger    l.Wrapper
 	udpServer *udpchannel.ChannelServer
 }
 
-func NewTunAPServer(cfg *Config, logger logger.Wrapper) *TunAPServer {
+func NewTunAPServer(cfg *Config, logger l.Wrapper) *TunAPServer {
 	return &TunAPServer{
 		cfg:    cfg,
-		logger: logger,
+		logger: logger.WithFields(l.StringField(l.ClsKey, "tunApiServer")),
 	}
 }
 

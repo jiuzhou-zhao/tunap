@@ -5,27 +5,26 @@ import (
 
 	"github.com/jiuzhou-zhao/tunap/internal/config"
 	"github.com/jiuzhou-zhao/tunap/internal/s"
-	"github.com/sgostarter/i/logger"
+	"github.com/sgostarter/i/l"
+	"github.com/sgostarter/liblogrus"
 )
 
 func main() {
-	rLog := logger.NewCommLogger(&logger.FmtRecorder{})
-	rLog.SetLevel(logger.LevelDebug)
-	log := logger.NewWrapper(rLog)
-	log.GetLogger().SetLevel(logger.LevelDebug)
+	logger := l.NewWrapper(liblogrus.NewLogrus())
+	logger.GetLogger().SetLevel(l.LevelWarn)
 
 	var cfg s.Config
 	err := config.LoadConfig("s-config", &cfg)
 
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal(err)
 	}
 
 	if cfg.Env != "" && strings.ToUpper(cfg.Env) == "dev" {
-		log.GetLogger().SetLevel(logger.LevelDebug)
+		logger.GetLogger().SetLevel(l.LevelDebug)
 	}
 
-	tunS := s.NewTunAPServer(&cfg, log)
+	tunS := s.NewTunAPServer(&cfg, logger)
 
 	if cfg.WebListenAddress != "" {
 		go func() {

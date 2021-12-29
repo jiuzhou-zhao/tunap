@@ -28,9 +28,15 @@ jobs:
 
       - name: Build
         run: |
-          go build -o tunaps -v ./cmd/tunaps
-          go build -o tunapc -v ./cmd/tunapc
-          tar zcvf tunap-linux.tgz tunaps tunapc config/s-config.yml.sample config/c-config.yml.sample
+          rm -rf bins || true
+          mkdir bins
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-w -s" -o ./bins/tunaps_linux cmd/tunaps/*.go
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-w -s" -o ./bins/tunapc_linux cmd/tunapc/*.go
+          CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -ldflags "-w -s" -o ./bins/tunaps_mac cmd/tunaps/*.go
+          CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -ldflags "-w -s" -o ./bins/tunapc_mac cmd/tunapc/*.go
+          CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags "-w -s" -o ./bins/tunaps_win.exe cmd/tunaps/*.go
+          CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags "-w -s" -o ./bins/tunapc_win.exe cmd/tunapc/*.go
+          tar zcvf tunap.tgz bins config/c-config.yml.sample config/s-config.yml.sample
 
       - name: Create Release
         id: create_release

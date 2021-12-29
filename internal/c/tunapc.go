@@ -10,19 +10,19 @@ import (
 	"github.com/jiuzhou-zhao/data-channel/tcp"
 	"github.com/jiuzhou-zhao/data-channel/udp"
 	"github.com/jiuzhou-zhao/data-channel/wrapper"
+	udpchannel "github.com/jiuzhou-zhao/tun-channel"
 	"github.com/jiuzhou-zhao/tunap/pkg/hutils"
 	"github.com/jiuzhou-zhao/tunap/pkg/minit"
 	"github.com/jiuzhou-zhao/tunap/pkg/tun"
-	udpchannel "github.com/jiuzhou-zhao/udp-channel"
-	"github.com/sgostarter/i/logger"
+	"github.com/sgostarter/i/l"
 )
 
 type TunAPClient struct {
 	cfg    *Config
-	logger logger.Wrapper
+	logger l.Wrapper
 }
 
-func NewTunAPClient(cfg *Config, logger logger.Wrapper) *TunAPClient {
+func NewTunAPClient(cfg *Config, logger l.Wrapper) *TunAPClient {
 	minit.Init(&cfg.TunAPInitConfig)
 	f := cfg.IsVPNTarget
 
@@ -34,7 +34,7 @@ func NewTunAPClient(cfg *Config, logger logger.Wrapper) *TunAPClient {
 
 	return &TunAPClient{
 		cfg:    cfg,
-		logger: logger,
+		logger: logger.WithFields(l.StringField(l.ClsKey, "tunApiClient")),
 	}
 }
 

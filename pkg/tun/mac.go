@@ -8,7 +8,7 @@ import (
 
 	"github.com/jiuzhou-zhao/tunap/pkg/hutils"
 	"github.com/jiuzhou-zhao/tunap/pkg/hutils/mos"
-	"github.com/sgostarter/i/logger"
+	"github.com/sgostarter/i/l"
 	"github.com/songgao/water"
 )
 
@@ -54,6 +54,6 @@ func DeviceSetup(localCIDR, _deviceName string) (Device, error) {
 	}, nil
 }
 
-func ClientExtInit(isTargetVPN bool, logger logger.Wrapper) {
+func ClientExtInit(isTargetVPN bool, logger l.Wrapper) {
 
 }

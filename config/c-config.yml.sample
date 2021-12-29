@@ -1,4 +1,4 @@
-ElevationURL: "http://127.0.0.1:1981"
-ServerAddress: "ymipro.com:1982"
+ServerAddress: "ymipro.com:19821"
 SecKey: "x123JUio"
-VipCIDR: "192.168.11.1/24"
+Vip: "192.168.51.77/24"
+NifName: "tun_3"
