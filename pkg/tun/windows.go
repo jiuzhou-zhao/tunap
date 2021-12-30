@@ -26,6 +26,7 @@ type WinTunDevice struct {
 
 func (dev *WinTunDevice) fakeHardwareAddr(ip net.IP) net.HardwareAddr {
 	ip = ip.To4()
+
 	return net.HardwareAddr{0xf0, 0x18, ip[0], ip[1], ip[2], ip[3]}
 }
 
@@ -35,15 +36,15 @@ func (dev *WinTunDevice) recordHardwareAddr(ip net.IP, addr net.HardwareAddr) {
 	dev.realMacMap[ip.String()] = addr
 }
 
-func (dev *WinTunDevice) getHardwareAddr(ip net.IP) (net.HardwareAddr, error) {
+func (dev *WinTunDevice) getHardwareAddr(ip net.IP) net.HardwareAddr {
 	dev.RLock()
 	defer dev.RUnlock()
 
 	if addr, ok := dev.realMacMap[ip.String()]; ok {
-		return addr, nil
+		return addr
 	}
-	return dev.fakeHardwareAddr(ip), nil
-	// return nil, fmt.Errorf("no mac address record for %v", ip.String())
+
+	return dev.fakeHardwareAddr(ip)
 }
 
 func (dev *WinTunDevice) writeEthernetFrame(data []byte, destHardwareAddr net.HardwareAddr, srcHardwareAddr net.HardwareAddr, etherType ethernet.EtherType) error {
@@ -54,13 +55,17 @@ func (dev *WinTunDevice) writeEthernetFrame(data []byte, destHardwareAddr net.Ha
 		Payload:     data,
 	}
 	fb, err := frame.MarshalBinary()
+
 	if err != nil {
 		return err
 	}
+
 	n, err := dev.ifc.Write(fb)
+
 	if err != nil || n != len(fb) {
 		return err
 	}
+
 	return nil
 }
 
@@ -70,10 +75,13 @@ func (dev *WinTunDevice) replyArp(arpFrame *arp.Packet) {
 	if err != nil {
 		return
 	}
+
 	arpData, err := arpReply.MarshalBinary()
+
 	if err != nil {
 		return
 	}
+
 	err = dev.writeEthernetFrame(arpData, arpFrame.SenderHardwareAddr, dev.fakeHardwareAddr(arpFrame.TargetIP), ethernet.EtherTypeARP)
 	if err != nil {
 		return
@@ -83,20 +91,26 @@ func (dev *WinTunDevice) replyArp(arpFrame *arp.Packet) {
 func (dev *WinTunDevice) Read(p []byte) (n int, err error) {
 read:
 	frame := make([]byte, 10000)
+
 	n, err = dev.ifc.Read(frame)
+
 	if err != nil {
 		return
 	}
+
 	frame = frame[:n]
 	arpFrame, ethernetFrame, err := hutils.ParseEthernetFrame(frame)
+
 	if err != nil {
 		return
 	}
+
 	if arpFrame != nil {
 		// arp
 		if arpFrame.Operation == arp.OperationRequest {
 			dev.recordHardwareAddr(arpFrame.SenderIP, arpFrame.SenderHardwareAddr)
 		}
+
 		if dev.ip.String() != arpFrame.TargetIP.String() { //  && (dev.ipNet.Contains(arpFrame.TargetIP))
 			dev.replyArp(arpFrame)
 		}
@@ -106,6 +120,7 @@ read:
 
 	if ethernetFrame.EtherType == ethernet.EtherTypeIPv4 {
 		n = copy(p, ethernetFrame.Payload)
+
 		return
 	}
 
@@ -115,17 +130,19 @@ read:
 func (dev *WinTunDevice) Write(p []byte) (n int, err error) {
 	ipPackage := hutils.IPPacket(p)
 	if ipPackage.IPver() != 4 {
+		// nolint: goerr113
 		err = errors.New("not ip v4 package")
+
 		return
 	}
-	dstAddr, err := dev.getHardwareAddr(ipPackage.DstV4())
-	if err != nil {
-		return
-	}
+
+	dstAddr := dev.getHardwareAddr(ipPackage.DstV4())
+
 	err = dev.writeEthernetFrame(p, dstAddr, dev.fakeHardwareAddr(ipPackage.SrcV4()), ethernet.EtherTypeIPv4)
 	if err != nil {
 		return 0, err
 	}
+
 	return len(p), nil
 }
 

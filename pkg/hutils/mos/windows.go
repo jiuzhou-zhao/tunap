@@ -1,11 +1,13 @@
+//go:build windows
 // +build windows
 
 package mos
 
 import (
-	"github.com/jiuzhou-zhao/tunap/pkg/hutils"
 	"net"
 	"strconv"
+
+	"github.com/jiuzhou-zhao/tunap/pkg/hutils"
 )
 
 func NifSetIPAddress(ifName, ip, mask string) error {
@@ -27,6 +29,7 @@ func NifRouteNetAdd(ipNet, ipNetmask, dev string) error {
 	if err != nil {
 		return err
 	}
+
 	return hutils.ElevationExecute("route", []string{
 		"add",
 		ipNet,
@@ -59,6 +62,7 @@ func NifRouteHostAdd(host, dev string) error {
 	if err != nil {
 		return err
 	}
+
 	return hutils.ElevationExecute("route", []string{
 		"add",
 		host,

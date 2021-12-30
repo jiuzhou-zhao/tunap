@@ -9,6 +9,8 @@ import (
 )
 
 func TestTunDeviceSetup(t *testing.T) {
+	t.SkipNow()
+
 	minit.Init(&minit.TunAPInitConfig{
 		ElevationURL: "http://127.0.0.1:1981",
 	})

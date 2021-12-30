@@ -1,11 +1,13 @@
+//go:build linux
 // +build linux
 
 package mos
 
 import (
-	"github.com/golang/glog"
 	"os/exec"
 	"strings"
+
+	"github.com/golang/glog"
 )
 
 const (
@@ -17,11 +19,13 @@ func executeEx(name string, args []string) (o string, err error) {
 	if out != nil {
 		o = string(out)
 	}
+
 	return
 }
 
 func execute(name string, args []string) error {
 	_, err := executeEx(name, args)
+
 	return err
 }
 
@@ -35,6 +39,7 @@ func FirewallTrustNif(nifName string) error {
 	if strings.HasPrefix(o, "yes") {
 		return nil
 	}
+
 	_ = execute(firewallCmd, []string{
 		"--remove-interface=" + nifName,
 	})
@@ -49,6 +54,7 @@ func FirewallQueryMasquerade() bool {
 	o, _ := executeEx(firewallCmd, []string{
 		"--query-masquerade",
 	})
+
 	return strings.HasPrefix(o, "yes")
 }
 
@@ -57,13 +63,17 @@ func FirewallOpenMasquerade() error {
 	if FirewallQueryMasquerade() {
 		return nil
 	}
+
 	_, err := executeEx(firewallCmd, []string{
 		"--add-masquerade",
 	})
+
 	if err != nil {
 		glog.Errorf("FwTrustInterface failed: %v", err)
+
 		return err
 	}
+
 	return nil
 }
 
