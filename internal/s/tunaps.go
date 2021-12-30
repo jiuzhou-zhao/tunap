@@ -2,6 +2,7 @@ package s
 
 import (
 	"context"
+	"github.com/jiuzhou-zhao/data-channel/grpc"
 	"html/template"
 	"strconv"
 	"strings"
@@ -43,6 +44,8 @@ func (s *TunAPServer) Run() {
 		serverChannel, err = tcp.NewServer(context.Background(), s.cfg.ListenAddress, nil, s.logger)
 
 		dps = append(dps, dataprocessor.NewServerTCPBag())
+	case "grpc":
+		serverChannel, err = grpc.NewServer(context.Background(), s.cfg.ListenAddress, nil, s.logger)
 	}
 
 	if err != nil {

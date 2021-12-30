@@ -2,6 +2,7 @@ package c
 
 import (
 	"context"
+	"github.com/jiuzhou-zhao/data-channel/grpc"
 	"net"
 	"strings"
 
@@ -105,6 +106,8 @@ func (c *TunAPClient) Run() {
 		cliChannel, err = tcp.NewClient(context.Background(), c.cfg.ServerAddress, nil, c.logger)
 
 		dps = append(dps, dataprocessor.NewClientTCPBag())
+	case "grpc":
+		cliChannel, err = grpc.NewClient(context.Background(), c.cfg.ServerAddress, nil, c.logger)
 	}
 
 	if err != nil {

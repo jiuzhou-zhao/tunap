@@ -1,4 +1,0 @@
-ListenAddress: ":1982"
-SecKey: "x123JUio"
-VpnVip: "192.168.11.10"
-WebListenAddress: ":8877"
