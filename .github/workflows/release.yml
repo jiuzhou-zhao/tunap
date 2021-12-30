@@ -55,6 +55,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: lumos-linux.tgz
-          asset_name: lumos-linux.tgz
+          asset_path: tunap.tgz
+          asset_name: tunap.tgz
           asset_content_type: application/gzip
