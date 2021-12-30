@@ -5,8 +5,8 @@ go 1.17
 require (
 	github.com/gin-gonic/gin v1.7.7
 	github.com/golang/glog v1.0.0
-	github.com/jiuzhou-zhao/data-channel v0.0.3
-	github.com/jiuzhou-zhao/tun-channel v1.0.3
+	github.com/jiuzhou-zhao/data-channel v0.0.5
+	github.com/jiuzhou-zhao/tun-channel v1.0.6
 	github.com/mdlayher/arp v0.0.0-20191213142603-f72070a231fc
 	github.com/mdlayher/ethernet v0.0.0-20190606142754-0394541c37b7
 	github.com/milosgajdos/tenus v0.0.3

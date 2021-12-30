@@ -3,3 +3,6 @@
 /tunaps
 /config/l
 /bins
+/config/s-config.yml
+/config/c-config.yml
+/deployments

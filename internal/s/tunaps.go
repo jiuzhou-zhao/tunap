@@ -2,25 +2,25 @@ package s
 
 import (
 	"context"
-	"github.com/jiuzhou-zhao/data-channel/grpc"
 	"html/template"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/jiuzhou-zhao/data-channel/dataprocessor"
+	"github.com/jiuzhou-zhao/data-channel/grpc"
 	"github.com/jiuzhou-zhao/data-channel/inter"
 	"github.com/jiuzhou-zhao/data-channel/tcp"
 	"github.com/jiuzhou-zhao/data-channel/udp"
 	"github.com/jiuzhou-zhao/data-channel/wrapper"
-	udpchannel "github.com/jiuzhou-zhao/tun-channel"
+	tunchannel "github.com/jiuzhou-zhao/tun-channel"
 	"github.com/sgostarter/i/l"
 )
 
 type TunAPServer struct {
 	cfg       *Config
 	logger    l.Wrapper
-	udpServer *udpchannel.ChannelServer
+	udpServer *tunchannel.ChannelServer
 }
 
 func NewTunAPServer(cfg *Config, logger l.Wrapper) *TunAPServer {
@@ -52,7 +52,7 @@ func (s *TunAPServer) Run() {
 		s.logger.Fatal(err)
 	}
 
-	s.udpServer, err = udpchannel.NewChannelServer(context.Background(), s.logger, NewIPV4KeyParser(),
+	s.udpServer, err = tunchannel.NewChannelServer(context.Background(), s.logger, NewIPV4KeyParser(),
 		wrapper.NewServer(serverChannel, s.logger, dps...), s.cfg.VpnVip)
 
 	if err != nil {

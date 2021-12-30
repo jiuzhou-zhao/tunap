@@ -19,7 +19,7 @@ func main() {
 		logger.Fatal(err)
 	}
 
-	if cfg.Env != "" && strings.ToUpper(cfg.Env) == "dev" {
+	if cfg.Env != "" && strings.ToLower(cfg.Env) == "dev" {
 		logger.GetLogger().SetLevel(l.LevelDebug)
 	}
 
