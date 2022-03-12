@@ -66,10 +66,7 @@ func DeviceSetup(localCIDR, deviceName string) (Device, error) {
 		return nil, err
 	}
 
-	err = mos.FirewallTrustNif(tunDev.Name())
-	if err != nil {
-		return nil, err
-	}
+	_ = mos.FirewallTrustNif(tunDev.Name())
 
 	return &LinuxTunDevice{
 		Interface: tunDev,

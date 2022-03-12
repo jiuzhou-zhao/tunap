@@ -346,13 +346,13 @@ github.com/ryanuber/columnize v0.0.0-20160712163229-9b3edd62028f/go.mod h1:sm1tb
 github.com/sagikazarmark/crypt v0.3.0/go.mod h1:uD/D+6UF4SrIR1uGEv7bBNkNqLGqUr43MRiaGWX1Nig=
 github.com/sagikazarmark/crypt v0.4.0/go.mod h1:ALv2SRj7GxYV4HO9elxH9nS6M9gW+xDNxqmyJ6RfDFM=
 github.com/sean-/seed v0.0.0-20170313163322-e2103e2c3529/go.mod h1:DxrIzT+xaE7yg65j358z/aeFdxmN0P9QXhEzd20vsDc=
-github.com/sgostarter/i v0.1.0/go.mod h1:buUUS9rtMjKmQhYNKxiM+brhFX7jLzZKv6AuZlHCgGk=
-github.com/sgostarter/i v0.1.1 h1:Cma7s82AIWMD1v4H98grNJuoLqUSp7eLQREfk+Rl2+o=
 github.com/sgostarter/i v0.1.1/go.mod h1:buUUS9rtMjKmQhYNKxiM+brhFX7jLzZKv6AuZlHCgGk=
+github.com/sgostarter/i v0.1.3 h1:aK7VqID/13M4u/v4818Zsk/+CkQfIcPAtcRof6T6dxo=
+github.com/sgostarter/i v0.1.3/go.mod h1:buUUS9rtMjKmQhYNKxiM+brhFX7jLzZKv6AuZlHCgGk=
 github.com/sgostarter/libencrypt v0.0.0-20211104060755-2a05e6739183 h1:o0wqfyEZ8F3PteEXOkYo3byP+mzVZ1QV2cKbhxiOGVg=
 github.com/sgostarter/libencrypt v0.0.0-20211104060755-2a05e6739183/go.mod h1:2eqjOk+h19lN59KPedffnNVmfe1VV9vCVNLctHqxQic=
-github.com/sgostarter/liblogrus v0.0.3 h1:ej1gRBuBWEiClm300FAWh22lnk+4Mo4K0z3WVtjPsM4=
-github.com/sgostarter/liblogrus v0.0.3/go.mod h1:8rCvW7DAGOMWbvnlhXe7SVs0sptw3x4Bh4OvjPpYSh8=
+github.com/sgostarter/liblogrus v0.0.5 h1:I7dqxME7FvEK3fuhJ7NQAy4phjX9h/TUW+FKhgDWeSw=
+github.com/sgostarter/liblogrus v0.0.5/go.mod h1:n+m+QD+lROXBANKHGD8mmaPsFrkDEDrRyqO68aUoIO4=
 github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
 github.com/sirupsen/logrus v1.4.2/go.mod h1:tLMulIdttU9McNUspp0xgXVQah82FyeX6MwdIuYE2rE=
 github.com/sirupsen/logrus v1.8.1 h1:dJKuHgqk1NNQlqoA6BTlM1Wf9DOH3NBjQyu0h9+AZZE=
